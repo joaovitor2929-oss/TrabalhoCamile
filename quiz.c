@@ -10,9 +10,9 @@ typedef struct Questoes{  //struct onde armazena as questoes, alternativas, resp
     char gabarito;
 }QUESTOES;
 
-void cadastrarQuestoes(QUESTOES *Quiz, int cont){ //funÃ§Ã£o para cadastrar as questÃµes, recebe o vetor de questÃµes e a quantidade de questÃµes a serem cadastradas
+void cadastrarQuestoes(QUESTOES *Quiz, int cont){ //função para cadastrar as questões, recebe o vetor de questões e a quantidade de questões a serem cadastradas
     for(int i = 0; i < cont; i++){
-        printf("\n%dÂ° pergunta: ", i + 1);
+        printf("\n%d° pergunta: ", i + 1);
         scanf(" %99[^\n]", Quiz[i].pergunta);
         
         printf("\nalternativa A: ");
@@ -36,31 +36,42 @@ void cadastrarQuestoes(QUESTOES *Quiz, int cont){ //funÃ§Ã£o para cadastrar as q
 int main()
 {
     setlocale(LC_ALL, "Portuguese");
-    FILE *banco; FILE *resultados; //arquivo de banco de questÃµes e arquivo de resultados
-    int opcao = 0;/*variavel que armazena a opÃ§Ã£o escolhida pelo usuÃ¡rio*/ int pontuacao = 0; /*variavel de pontuaÃ§Ã£o do quiz*/
-    int quant = 0; /* variavel de quantidade de questÃµes*/ int editar = 0; //variavel auto explicativa
-    char nome[100]; /*variavel de nome do usuÃ¡rio*/ float percentual = 0.0; /*variavel de percentual de acertos do quiz*/
-    
+    FILE *banco; FILE *resultados; //arquivo de banco de questões e arquivo de resultados
+    int opcao = 0;/*variavel que armazena a opção escolhida pelo usuário*/ int pontuacao = 0; /*variavel de pontuação do quiz*/
+    int quant = 0; /* variavel de quantidade de questões*/ int editar = 0; //variavel auto explicativa
+    char nome[100]; /*variavel de nome do usuário*/ float percentual = 0.0; /*variavel de percentual de acertos do quiz*/
+    int retorno;//variavel para validar a entrada do usuário para a quantidade de questões
+
     printf("\t----SISTEMA DE QUIZ----");
-    printf("\n\nQuantas questï¿½es deseja fazer: ");
-    scanf("%d", &quant);
-    
+    do{
+        printf("\n\nQuantas questões deseja fazer: ");
+        retorno = scanf("%d", &quant);
+
+        if(retorno != 1){
+            printf("Entrada inválida. Por favor, digite um número válido.\n");
+            while(getchar() != '\n'); // Limpa o buffer do teclado
+        }
+        else if(quant <= 0 || quant > 50){
+            printf("Quantidade inválida. Por favor, digite um número entre 1 e 50.\n");
+        }
+
+    }while(retorno != 1 || quant <= 0 || quant > 50); //validação para aceitar apenas números inteiros positivos e limitar a quantidade de questões a 50
     QUESTOES quiz[quant];
-    cadastrarQuestoes(quiz, quant);//chama a funÃ§Ã£o de cadastrar questÃµes para cadastrar as questÃµes iniciais do quiz
-    printf("\n- %d questÃµes cadastradas com sucesso !-\n", quant);
+    cadastrarQuestoes(quiz, quant);//chama a função de cadastrar questões para cadastrar as questões iniciais do quiz
+    printf("\n- %d questões cadastradas com sucesso !-\n", quant);
     
     do{
         printf("\n\t-----MENU-----\n");
         printf("\n1 - Editar perguntas");
         printf("\n2 - Iniciar Quiz");
         printf("\n3 - Sair");
-        printf("\nEscolha uma opÃ§Ã£o: ");
+        printf("\nEscolha uma opção: ");
         scanf("%d", &opcao);
     
-    if(opcao == 1){
+    if(opcao == 1){ /*opção para editar perguntas*/
         printf("\nPerguntas cadastradas:");
         for(int j = 0; j < quant; j++){  //mostra as perguntas para o usuario decidir qual editar
-            printf("\n%dÂ° pergunta: ", j + 1);
+            printf("\n%d° pergunta: ", j + 1);
             printf(" %s\n", quiz[j].pergunta);
         }
         
@@ -68,13 +79,16 @@ int main()
         do{
             printf("Qual pergunta deseja editar: ");
             scanf("%d", &editar);
-        }while( ((editar < 1) || (editar > quant)) && editar != 99); //validaÃ§Ã£o
+            if( ((editar < 1) || (editar > quant)) && editar != 99){ //validação para mostrar mensagem de erro
+                printf("Opção inválida, tente novamente: ");
+            }
+        }while( ((editar < 1) || (editar > quant)) && editar != 99); //validação
         
         if(editar == 99){
-            cadastrarQuestoes(quiz, quant);//chama a funÃ§Ã£o de cadastrar questÃµes para editar todas as questÃµes
+            cadastrarQuestoes(quiz, quant);//chama a função de cadastrar questões para editar todas as questões
         }
-        else{ //edita apenas a questÃ£o escolhida
-            printf("\n%dÂ° pergunta: ", editar);
+        else{ //edita apenas a questão escolhida
+            printf("\n%d° pergunta: ", editar);
             scanf(" %99[^\n]", quiz[editar - 1].pergunta);
             
             printf("\nalternativa A: ");
@@ -85,15 +99,19 @@ int main()
             
             printf("\nGabarito: ");
 
-            do{ //validaÃ§Ã£o do gabarito para aceitar apenas 'A' ou 'B'
+            do{ //validação do gabarito para aceitar apenas 'A' ou 'B'
                 scanf(" %c", &quiz[editar - 1].gabarito);
                 quiz[editar - 1].gabarito = toupper(quiz[editar - 1].gabarito);
-                if(quiz[editar - 1].gabarito != 'A' && quiz[editar - 1].gabarito != 'B'){ //validaÃ§Ã£o para mostrar mensagem de erro
+                if(quiz[editar - 1].gabarito != 'A' && quiz[editar - 1].gabarito != 'B'){ //validação para mostrar mensagem de erro
                 printf("APENAS 'A' ou 'B': ");
                 }
-            }while(quiz[editar - 1].gabarito != 'A' && quiz[editar - 1].gabarito != 'B'); //validaÃ§Ã£o para repetir a pergunta em caso de erro
+            }while(quiz[editar - 1].gabarito != 'A' && quiz[editar - 1].gabarito != 'B'); //validação para repetir a pergunta em caso de erro
         }
         banco = fopen("C:\\Users\\Samsung\\Desktop\\Questoes.txt", "w");
+        if(banco == NULL){//validação para mostrar mensagem de erro em caso de falha ao abrir o arquivo
+            printf("Erro ao abrir o arquivo!");
+            return 1;
+        }
         for(int k = 0; k < quant; k++){
             fprintf(banco, " %s\n", quiz[k].pergunta);
             fprintf(banco, " %s\n", quiz[k].alternativaA);
@@ -103,14 +121,15 @@ int main()
             fclose(banco);  //salvar as Questoes no arquivo
     }
     
-        if(opcao == 2){ //inicia o quiz, mostrando as perguntas e alternativas para o usuÃ¡rio responder, e ao final mostra a pontuaÃ§Ã£o e percentual de acertos
+        else if(opcao == 2){ //inicia o quiz, mostrando as perguntas e alternativas para o usuário responder, e ao final mostra a pontuação e percentual de acertos
+            pontuacao = 0; //reseta a pontuação para o caso do usuário fazer o quiz mais de uma vez
             printf("\n\t******QUIZ******\n");
             printf("Digite seu nome: ");
             scanf(" %99[^\n]", nome);
             
             for(int x = 0; x < quant; x++){
                 printf("----------------------------------");
-                printf("\n%dÂ° pergunta: ", x + 1);
+                printf("\n%d° pergunta: ", x + 1);
                 printf(" %s\n", quiz[x].pergunta);
                 
                 printf("\nalternativa A: ");
@@ -142,11 +161,18 @@ int main()
             printf("\nAproveitamento: %.1f%%", percentual);
 
             resultados = fopen("C:\\Users\\Samsung\\Desktop\\Resultados.txt", "a");
+            if(resultados == NULL){ //validação para mostrar mensagem de erro em caso de falha ao abrir o arquivo
+                printf("Erro ao abrir o arquivo!");
+                return 1;
+            }
             fprintf(resultados, "Nome: %s\n", nome);
-            fprintf(resultados, "PontuaÃ§Ã£o: %d\n\n", pontuacao);
+            fprintf(resultados, "Pontuação: %d\n\n", pontuacao);
             fclose(resultados); //salva resultados no arquivo
         }
-    }while(opcao != 3);//validaÃ§Ã£o
+        else if(opcao != 3){ //validação para mostrar mensagem de erro em caso de opção inválida
+            printf("\nOpção inválida, tente novamente.");
+        }
+    }while(opcao != 3);//validação
 
     return 0;
 }
