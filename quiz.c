@@ -32,6 +32,13 @@ void cadastrarQuestoes(QUESTOES *Quiz, int cont){ //função para cadastrar as que
     }
 }
 
+void validarEntrada(int *retorno, int *valor) {
+    *retorno = scanf("%d", valor);
+    if(*retorno != 1){
+        while(getchar() != '\n'); // Limpa o buffer do teclado
+        *valor = 0; // Define um valor inválido para a variável de controle
+    }
+}
 
 int main()
 {
@@ -40,24 +47,24 @@ int main()
     int opcao = 0;/*variavel que armazena a opção escolhida pelo usuário*/ int pontuacao = 0; /*variavel de pontuação do quiz*/
     int quant = 0; /* variavel de quantidade de questões*/ int editar = 0; //variavel auto explicativa
     char nome[100]; /*variavel de nome do usuário*/ float percentual = 0.0; /*variavel de percentual de acertos do quiz*/
-    int retorno;//variavel para validar a entrada do usuário para a quantidade de questões
+    int retornoQuant;//variavel para validar a entrada do usuário para a quantidade de questões
     int retornoOpcao; //variavel para validar a entrada do usuário para a opção do menu
     int retornoEditar; //variavel para validar a entrada do usuário para a questão a ser editada
 
     printf("\t----SISTEMA DE QUIZ----");
     do{
         printf("\n\nQuantas questões deseja fazer: ");
-        retorno = scanf("%d", &quant);
+        validarEntrada(&retornoQuant, &quant);
 
-        if(retorno != 1){
+        if(retornoQuant != 1){
             printf("Entrada inválida. Por favor, digite um número válido.\n");
-            while(getchar() != '\n'); // Limpa o buffer do teclado
+            continue; // Volta para o início do loop para solicitar a quantidade de questões novamente
         }
         else if(quant <= 0 || quant > 50){
             printf("Quantidade inválida. Por favor, digite um número entre 1 e 50.\n");
         }
 
-    }while(retorno != 1 || quant <= 0 || quant > 50); //validação para aceitar apenas números inteiros positivos e limitar a quantidade de questões a 50
+    }while(retornoQuant != 1 || quant <= 0 || quant > 50); //validação para aceitar apenas números inteiros positivos e limitar a quantidade de questões a 50
     QUESTOES quiz[quant];
     cadastrarQuestoes(quiz, quant);//chama a função de cadastrar questões para cadastrar as questões iniciais do quiz
     printf("\n- %d questões cadastradas com sucesso !-\n", quant);
@@ -68,12 +75,10 @@ int main()
         printf("\n2 - Iniciar Quiz");
         printf("\n3 - Sair");
         printf("\nEscolha uma opção: ");
-        retornoOpcao = scanf("%d", &opcao);
+        validarEntrada(&retornoOpcao, &opcao);
 
         if(retornoOpcao != 1){
             printf("Entrada inválida. Por favor, digite um número válido.\n");
-            while(getchar() != '\n'); // Limpa o buffer do teclado
-            opcao = 0; // Define uma opção inválida para continuar o loop
             continue; // Volta para o início do loop para solicitar a opção novamente
         }
     
@@ -87,17 +92,15 @@ int main()
         printf("\n99 - para editar todas\n");
         do{
             printf("Qual pergunta deseja editar: ");
-            retornoEditar = scanf("%d", &editar);
-            
+            validarEntrada(&retornoEditar, &editar);
+
             if(retornoEditar != 1){
                 printf("Entrada inválida. Por favor, digite um número válido.\n");
-                while(getchar() != '\n'); // Limpa o buffer do teclado
-                editar = 0; // Define uma opção inválida para continuar o loop
                 continue; // Volta para o início do loop para solicitar a questão a ser editada novamente
             }
 
             if( ((editar < 1) || (editar > quant)) && editar != 99){ //validação para mostrar mensagem de erro
-                printf("Opção inválida, tente novamente: ");
+                printf("Entrada inválida. Por favor, digite um número válido.\n");
             }
         }while( ((editar < 1) || (editar > quant)) && editar != 99); //validação
         
@@ -186,8 +189,11 @@ int main()
             fprintf(resultados, "Pontuação: %d\n\n", pontuacao);
             fclose(resultados); //salva resultados no arquivo
         }
-        else if(opcao != 3){ //validação para mostrar mensagem de erro em caso de opção inválida
-            printf("\nOpção inválida, tente novamente.");
+        else if(opcao == 3){ //opção para sair do programa
+            printf("\nEncerrando programa...");
+        }
+        else{ //validação para mostrar mensagem de erro em caso de opção inválida
+            printf("\nEntrada inválida. Por favor, digite um número válido.");
         }
     }while(opcao != 3);//validação
 
