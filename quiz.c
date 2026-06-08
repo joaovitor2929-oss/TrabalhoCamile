@@ -41,6 +41,8 @@ int main()
     int quant = 0; /* variavel de quantidade de questões*/ int editar = 0; //variavel auto explicativa
     char nome[100]; /*variavel de nome do usuário*/ float percentual = 0.0; /*variavel de percentual de acertos do quiz*/
     int retorno;//variavel para validar a entrada do usuário para a quantidade de questões
+    int retornoOpcao; //variavel para validar a entrada do usuário para a opção do menu
+    int retornoEditar; //variavel para validar a entrada do usuário para a questão a ser editada
 
     printf("\t----SISTEMA DE QUIZ----");
     do{
@@ -66,7 +68,14 @@ int main()
         printf("\n2 - Iniciar Quiz");
         printf("\n3 - Sair");
         printf("\nEscolha uma opção: ");
-        scanf("%d", &opcao);
+        retornoOpcao = scanf("%d", &opcao);
+
+        if(retornoOpcao != 1){
+            printf("Entrada inválida. Por favor, digite um número válido.\n");
+            while(getchar() != '\n'); // Limpa o buffer do teclado
+            opcao = 0; // Define uma opção inválida para continuar o loop
+            continue; // Volta para o início do loop para solicitar a opção novamente
+        }
     
     if(opcao == 1){ /*opção para editar perguntas*/
         printf("\nPerguntas cadastradas:");
@@ -78,7 +87,15 @@ int main()
         printf("\n99 - para editar todas\n");
         do{
             printf("Qual pergunta deseja editar: ");
-            scanf("%d", &editar);
+            retornoEditar = scanf("%d", &editar);
+            
+            if(retornoEditar != 1){
+                printf("Entrada inválida. Por favor, digite um número válido.\n");
+                while(getchar() != '\n'); // Limpa o buffer do teclado
+                editar = 0; // Define uma opção inválida para continuar o loop
+                continue; // Volta para o início do loop para solicitar a questão a ser editada novamente
+            }
+
             if( ((editar < 1) || (editar > quant)) && editar != 99){ //validação para mostrar mensagem de erro
                 printf("Opção inválida, tente novamente: ");
             }
@@ -105,7 +122,7 @@ int main()
                 if(quiz[editar - 1].gabarito != 'A' && quiz[editar - 1].gabarito != 'B'){ //validação para mostrar mensagem de erro
                 printf("APENAS 'A' ou 'B': ");
                 }
-            }while(quiz[editar - 1].gabarito != 'A' && quiz[editar - 1].gabarito != 'B'); //validação para repetir a pergunta em caso de erro
+            }while(quiz[editar - 1].gabarito != 'A' && quiz[editar - 1].gabarito != 'B'); //validação para repetir a pergunta até o usuário digitar uma resposta válida
         }
         banco = fopen("C:\\Users\\Samsung\\Desktop\\Questoes.txt", "w");
         if(banco == NULL){//validação para mostrar mensagem de erro em caso de falha ao abrir o arquivo
